@@ -1,5 +1,9 @@
 const form = document.getElementById("form-cadastro");
 let linhas = '';
+let linha = '';
+let IdArray = 0;
+let IdLinha = 0;
+let ArrayCompleto = [];
 
 const inputNome = document.getElementById('nome-contato');// Seletor do campo Nome
 const inputTelefone = document.getElementById('tel'); // Seletor do campo de telefone
@@ -18,9 +22,8 @@ const mascaraTelefone = (valor) => {
 form.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    AdicionaLinha();
-    AtualizaTabela();
-    
+    AdicionaLinha(inputNome.value,inputTelefone.value);
+    AtualizaTabela();    
 })
 
 function AtualizaTabela() {
@@ -28,30 +31,52 @@ function AtualizaTabela() {
     corpoTabela.innerHTML = linhas;
 }
 
-function AdicionaLinha(){
-    let linha = '<tr>'
-    linha += '<td>' + inputNome.value + '</td>';
-    linha += '<td>' + inputTelefone.value + '</td>';
-    linha += '<td><img src="./images/lixeira.jpg" alt="lixeira" id="lixeira" class="lixeira" onclick="ApagaLinha(event.target)" /></td>'
+function AdicionaLinha(nomelinha, telefonelinha){
+    linha = '<tr>'
+    linha += '<td>' + nomelinha + '</td>';
+    linha += '<td>' + telefonelinha + '</td>';
+    linha += '<td><img src="./images/lixeira.jpg" alt="lixeira" id="'+ IdLinha +'" class="lixeira" onclick="ApagaLinha(event.target,' + IdLinha + ')" /></td>';
     linha += '</tr>';
 
-    linhas += linha;   
+    linhas += linha; 
+    IdLinha += 1; 
+
+    ArrayCompleto.push({nome:nomelinha,telefone:telefonelinha});   
 
     inputNome.value = '';
     inputTelefone.value = '';
 }
 
-function ApagaLinha(elementoClicado) {
-    elementoClicado.closest("tr").remove();
-    primeiralinha = '';
-    const ContatosCadastrados = document.getElementsByName('contatos-cadastrados');
-    ContatosCadastrados.forEach(parent => {
-    const corpoTabela = document.querySelector('tbody');
-    
-    //Como transformar o elemento tbody em codigo escrito(string), retirar as tags tbody dessa string e atualizar a variavel linhas?
-    // Se não fizer isso, se apagarmos uma linha e depois inserirmos outra, a linha apagada retorna à tela
-    console.log(corpoTabela);
-});
+function AtualizaLinha(nomelinha, telefonelinha, indice){
+    linha = '<tr>'
+    linha += '<td>' + nomelinha + '</td>';
+    linha += '<td>' + telefonelinha + '</td>';
+    linha += '<td><img src="./images/lixeira.jpg" alt="lixeira" id="'+ indice +'" class="lixeira" onclick="ApagaLinha(event.target,' + indice + ')" /></td>';
+    linha += '</tr>';
+
+    linhas += linha; 
+    IdLinha += 1; 
 }
+
+function ApagaLinha(elementoClicado, IdLinha) {
+    let NomeAtualizado = '';
+    let TelefoneAtualizado = '';
+
+    elementoClicado.closest("tr").remove();
+
+    linhas = '';
+    linha = '';  
+
+    ArrayCompleto.splice(IdLinha,1);
+
+    ArrayCompleto.forEach(function (item, indice, array) {
+        NomeAtualizado = item.nome;
+        TelefoneAtualizado = item.telefone;
+        AtualizaLinha(NomeAtualizado,TelefoneAtualizado, indice);
+      });
+
+      AtualizaTabela(); 
+};
+
     
 
